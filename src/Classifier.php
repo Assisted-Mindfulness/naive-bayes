@@ -97,7 +97,7 @@ class Classifier
      */
     public function incrementType(string $type): void
     {
-        if (!isset($this->documents[$type])) {
+        if (! isset($this->documents[$type])) {
             $this->documents[$type] = 0;
         }
 
@@ -114,7 +114,7 @@ class Classifier
      */
     public function incrementWord(string $type, string $word): void
     {
-        if (!isset($this->words[$type][$word])) {
+        if (! isset($this->words[$type][$word])) {
             $this->words[$type][$word] = 0;
         }
 
