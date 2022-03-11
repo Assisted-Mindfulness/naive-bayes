@@ -1,4 +1,4 @@
-## Naive Bayes
+# Naive Bayes
 
 Naive Bayes works by looking at a training set and making a guess based on that set.
 It uses simple statistics and a bit of math to calculate the result. 
