@@ -3,6 +3,14 @@
 Naive Bayes works by looking at a training set and making a guess based on that set.
 It uses simple statistics and a bit of math to calculate the result. 
 
+## What can I use this for?
+
+You can use this for categorizing any text content into any arbitrary set of **categories**. For example:
+
+- is an email **spam**, or **not spam** ?
+- is a news article about **technology**, **politics**, or **sports** ?
+- is a piece of text expressing **positive** emotions, or **negative** emotions?
+
 ## Installation
 
 You may install Naive Bayes into your project using the Composer package manager:
