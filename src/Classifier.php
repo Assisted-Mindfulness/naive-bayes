@@ -2,6 +2,7 @@
 
 namespace AssistedMindfulness\NaiveBayes;
 
+use Brick\Math\BigDecimal;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -39,10 +40,7 @@ class Classifier
                     $likelihood *= $this->p($word, $type);
                 }
 
-                return (float) Str::of($likelihood)
-                    ->before('E')
-                    ->limit(9, '')
-                    ->toString();
+                return (string) BigDecimal::of($likelihood);
             })
             ->sortDesc();
     }
@@ -52,7 +50,7 @@ class Classifier
      *
      * @return string
      */
-    public function mostPossible(string $statement): string
+    public function most(string $statement): string
     {
         return $this->guess($statement)->keys()->first();
     }
@@ -81,7 +79,7 @@ class Classifier
      *
      * @return Classifier
      */
-    public function uneven(bool $enabled): Classifier
+    public function uneven(bool $enabled = true): Classifier
     {
         $this->uneven = $enabled;
 

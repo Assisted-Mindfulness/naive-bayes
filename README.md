@@ -7,7 +7,7 @@ It uses simple statistics and a bit of math to calculate the result.
 
 You may install Naive Bayes into your project using the Composer package manager:
 
-```php
+```bash
 composer require assisted-mindfulness/naive-bayes
 ```
 
@@ -28,8 +28,8 @@ $classifier
 After you have trained the classifier, you can use the prediction of which category the transmitted text belongs to, for example:
 
 ```php
-$classifier->mostPossible('is a sunny days'); // positive
-$classifier->mostPossible('there will be rain'); // negative
+$classifier->most('is a sunny days'); // positive
+$classifier->most('there will be rain'); // negative
 ```
 
 In order for you to enter more similar information, you can use:
