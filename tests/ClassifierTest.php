@@ -9,7 +9,28 @@ use PHPUnit\Framework\TestCase;
 
 class ClassifierTest extends TestCase
 {
-    public function testmost(): void
+
+    public function testTokenizeClassifier(): void
+    {
+        $classifier = new Classifier();
+
+        $this->assertEquals(
+            ['hello', 'how', 'are', 'you'],
+            $classifier->getWords('Hello, how are you?')->toArray()
+        );
+
+        $this->assertEquals(
+            ['hello', 'how', 'are', 'you'],
+            $classifier->getWords("Hello\n\nHow are you?!")->toArray()
+        );
+
+        $this->assertEquals(
+            ['un', 'importante', 'punto', 'de', 'inflexión', 'en', 'la', 'historia', 'de', 'la', 'ciencia', 'filosófica', 'primitiva'],
+            $classifier->getWords("Un importante punto de inflexión en la historia de la ciencia filosófica primitiva")->toArray()
+        );
+    }
+
+    public function testMostClassifier(): void
     {
         $classifier = new Classifier();
 
@@ -144,5 +165,20 @@ class ClassifierTest extends TestCase
             ->learn('you should not eat much', 'health');
 
         $this->assertSame('politics', $classifier->most('Obama is'));
+    }
+
+    public function testSimpleSpam(): void
+    {
+        $classifier = new Classifier();
+
+        $classifier
+            ->learn('Some spam document', 'spam')
+            ->learn('Another spam document', 'spam')
+            ->learn('Some ham document', 'ham')
+            ->learn('Another ham document', 'ham');
+
+
+        $this->assertSame('ham', $classifier->most('Some ham document'));
+        $this->assertSame('spam', $classifier->most('Some ham spam'));
     }
 }
