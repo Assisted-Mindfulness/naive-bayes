@@ -75,7 +75,6 @@ class ClassifierTest extends TestCase
         $this->assertSame('German', $classifier->most($germanText));
     }
 
-
     public function testCorrectnessLearn(): void
     {
         $classifier = new Classifier();
