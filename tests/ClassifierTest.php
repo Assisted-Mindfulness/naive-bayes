@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class ClassifierTest extends TestCase
 {
-
     public function testTokenizeClassifier(): void
     {
         $classifier = new Classifier();
