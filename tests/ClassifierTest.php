@@ -15,19 +15,35 @@ class ClassifierTest extends TestCase
 
         $this->assertEquals(
             ['hello', 'how', 'are', 'you'],
-            $classifier->getWords('Hello, how are you?')->toArray()
+            $classifier->tokenize('Hello, how are you?')->toArray()
         );
 
         $this->assertEquals(
             ['hello', 'how', 'are', 'you'],
-            $classifier->getWords("Hello\n\nHow are you?!")->toArray()
+            $classifier->tokenize("Hello\n\nHow are you?!")->toArray()
         );
 
         $this->assertEquals(
             ['un', 'importante', 'punto', 'de', 'inflexión', 'en', 'la', 'historia', 'de', 'la', 'ciencia', 'filosófica', 'primitiva'],
-            $classifier->getWords("Un importante punto de inflexión en la historia de la ciencia filosófica primitiva")->toArray()
+            $classifier->tokenize("Un importante punto de inflexión en la historia de la ciencia filosófica primitiva")->toArray()
         );
     }
+
+    public function testCustomTokenizeClassifier(): void
+    {
+        $classifier = new Classifier();
+
+        $classifier->setTokenizer(
+            fn($str) => array_values(array_filter(explode('/', $str)))
+        );
+
+        $this->assertEquals(
+            ['usr', 'var', 'log'],
+            $classifier->tokenize('/usr/var/log/')->toArray()
+        );
+    }
+
+
 
     public function testMostClassifier(): void
     {
@@ -67,9 +83,9 @@ class ClassifierTest extends TestCase
         $classifier = new Classifier();
 
         $classifier
-            ->learn(file_get_contents(__DIR__ . '/datasets/training.language.en.txt'), 'English')
-            ->learn(file_get_contents(__DIR__ . '/datasets/training.language.fr.txt'), 'French')
-            ->learn(file_get_contents(__DIR__ . '/datasets/training.language.de.txt'), 'German');
+            ->learn((string) file_get_contents(__DIR__ . '/datasets/training.language.en.txt'), 'English')
+            ->learn((string) file_get_contents(__DIR__ . '/datasets/training.language.fr.txt'), 'French')
+            ->learn((string) file_get_contents(__DIR__ . '/datasets/training.language.de.txt'), 'German');
 
 
         $this->assertSame('English', $classifier->most('I am English'));

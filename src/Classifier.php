@@ -9,28 +9,67 @@ use Illuminate\Support\Str;
 class Classifier
 {
     /**
-     * @var array
+     * @var ?callable(string): array<int, string>
+     */
+    private $tokenizer;
+
+    /**
+     * @var array<string, array<string, int>>
      */
     private array $words = [];
 
     /**
-     * @var array
+     * @var array<string, int>
      */
     private array $documents = [];
 
-    /**
-     * @var bool
-     */
-    protected bool $uneven = false;
+    private bool $uneven = false;
 
     /**
-     * @param string $statement
-     *
-     * @return Collection
+     * @param callable(string): array<int, string> $tokenizer
+     */
+    public function setTokenizer(callable $tokenizer): void
+    {
+        $this->tokenizer = $tokenizer;
+    }
+
+    /**
+     * @return Collection<int, string>
+     */
+    public function tokenize(string $string): Collection
+    {
+        if ($this->tokenizer) {
+            /** @var array<int, string> */
+            $tokens = call_user_func($this->tokenizer, $string);
+
+            return collect($tokens);
+        }
+
+        return Str::of($string)
+            ->lower()
+            ->matchAll('/[[:alpha:]]+/u');
+    }
+
+    /**
+     * @return $this
+     */
+    public function learn(string $statement, string $type): self
+    {
+        foreach ($this->tokenize($statement) as $word) {
+            $this->incrementWord($type, $word);
+        }
+
+        $this->incrementType($type);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<string, string>
      */
     public function guess(string $statement): Collection
     {
-        $words = $this->getWords($statement);
+        $words = $this->tokenize($statement);
 
         return collect($this->documents)
             ->map(function ($count, string $type) use ($words) {
@@ -45,41 +84,16 @@ class Classifier
             ->sortDesc();
     }
 
-    /**
-     * @param string $statement
-     *
-     * @return string
-     */
     public function most(string $statement): string
     {
+        /** @var string */
         return $this->guess($statement)->keys()->first();
     }
 
     /**
-     * @param string $statement
-     * @param string $type
-     *
-     * @return $this
+     * @return self
      */
-    public function learn(string $statement, string $type): Classifier
-    {
-        $this
-            ->getWords($statement)
-            ->each(function (string $word) use ($type) {
-                $this->incrementWord($type, $word);
-            });
-
-        $this->incrementType($type);
-
-        return $this;
-    }
-
-    /**
-     * @param bool $enabled
-     *
-     * @return Classifier
-     */
-    public function uneven(bool $enabled = true): Classifier
+    public function uneven(bool $enabled = true): self
     {
         $this->uneven = $enabled;
 
@@ -88,12 +102,8 @@ class Classifier
 
     /**
      * Increment the document count for the type
-     *
-     * @param string $type
-     *
-     * @return void
      */
-    public function incrementType(string $type): void
+    private function incrementType(string $type): void
     {
         if (! isset($this->documents[$type])) {
             $this->documents[$type] = 0;
@@ -103,14 +113,9 @@ class Classifier
     }
 
     /**
-     * Increment the word count for the type
-     *
-     * @param string $type
-     * @param string $word
-     *
-     * @return void
+     * Increment the word count for the given type
      */
-    public function incrementWord(string $type, string $word): void
+    private function incrementWord(string $type, string $word): void
     {
         if (! isset($this->words[$type][$word])) {
             $this->words[$type][$word] = 0;
@@ -120,12 +125,9 @@ class Classifier
     }
 
     /**
-     * @param string $word
-     * @param string $type
-     *
      * @return float|int
      */
-    public function p(string $word, string $type)
+    private function p(string $word, string $type)
     {
         $count = $this->words[$type][$word] ?? 0;
 
@@ -133,26 +135,12 @@ class Classifier
     }
 
     /**
-     * @param string $type
-     *
      * @return float|int
      */
-    public function pTotal(string $type)
+    private function pTotal(string $type)
     {
         return $this->uneven
             ? ($this->documents[$type] + 1) / (array_sum($this->documents) + 1)
             : 1;
-    }
-
-    /**
-     * @param string $string
-     *
-     * @return Collection
-     */
-    public function getWords(string $string): Collection
-    {
-        return Str::of($string)
-            ->lower()
-            ->matchAll('/[[:alpha:]]+/u');
     }
 }
