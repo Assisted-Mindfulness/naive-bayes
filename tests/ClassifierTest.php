@@ -15,19 +15,35 @@ class ClassifierTest extends TestCase
 
         $this->assertEquals(
             ['hello', 'how', 'are', 'you'],
-            $classifier->getWords('Hello, how are you?')->toArray()
+            $classifier->tokenize('Hello, how are you?')->toArray()
         );
 
         $this->assertEquals(
             ['hello', 'how', 'are', 'you'],
-            $classifier->getWords("Hello\n\nHow are you?!")->toArray()
+            $classifier->tokenize("Hello\n\nHow are you?!")->toArray()
         );
 
         $this->assertEquals(
             ['un', 'importante', 'punto', 'de', 'inflexión', 'en', 'la', 'historia', 'de', 'la', 'ciencia', 'filosófica', 'primitiva'],
-            $classifier->getWords("Un importante punto de inflexión en la historia de la ciencia filosófica primitiva")->toArray()
+            $classifier->tokenize("Un importante punto de inflexión en la historia de la ciencia filosófica primitiva")->toArray()
         );
     }
+
+    public function testCustomTokenizeClassifier(): void
+    {
+        $classifier = new Classifier();
+
+        $classifier->setTokenizer(
+            fn($str) => array_values(array_filter(explode('/', $str)))
+        );
+
+        $this->assertEquals(
+            ['usr', 'var', 'log'],
+            $classifier->tokenize('/usr/var/log/')->toArray()
+        );
+    }
+
+
 
     public function testMostClassifier(): void
     {

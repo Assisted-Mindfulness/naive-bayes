@@ -9,6 +9,11 @@ use Illuminate\Support\Str;
 class Classifier
 {
     /**
+     * @var ?callable(string): array<int, string>
+     */
+    private $tokenizer;
+
+    /**
      * @var array<string, array<string, int>>
      */
     private array $words = [];
@@ -21,11 +26,50 @@ class Classifier
     private bool $uneven = false;
 
     /**
+     * @param callable(string): array<int, string> $tokenizer
+     */
+    public function setTokenizer(callable $tokenizer): void
+    {
+        $this->tokenizer = $tokenizer;
+    }
+
+    /**
+     * @return Collection<int, string>
+     */
+    public function tokenize(string $string): Collection
+    {
+        if ($this->tokenizer) {
+            /** @var array<int, string> */
+            $tokens = call_user_func($this->tokenizer, $string);
+
+            return collect($tokens);
+        }
+
+        return Str::of($string)
+            ->lower()
+            ->matchAll('/[[:alpha:]]+/u');
+    }
+
+    /**
+     * @return $this
+     */
+    public function learn(string $statement, string $type): self
+    {
+        foreach ($this->tokenize($statement) as $word) {
+            $this->incrementWord($type, $word);
+        }
+
+        $this->incrementType($type);
+
+        return $this;
+    }
+
+    /**
      * @return Collection<string, string>
      */
     public function guess(string $statement): Collection
     {
-        $words = $this->getWords($statement);
+        $words = $this->tokenize($statement);
 
         return collect($this->documents)
             ->map(function ($count, string $type) use ($words) {
@@ -47,20 +91,6 @@ class Classifier
     }
 
     /**
-     * @return $this
-     */
-    public function learn(string $statement, string $type): self
-    {
-        foreach ($this->getWords($statement) as $word) {
-            $this->incrementWord($type, $word);
-        }
-
-        $this->incrementType($type);
-
-        return $this;
-    }
-
-    /**
      * @return self
      */
     public function uneven(bool $enabled = true): self
@@ -73,7 +103,7 @@ class Classifier
     /**
      * Increment the document count for the type
      */
-    public function incrementType(string $type): void
+    private function incrementType(string $type): void
     {
         if (! isset($this->documents[$type])) {
             $this->documents[$type] = 0;
@@ -85,7 +115,7 @@ class Classifier
     /**
      * Increment the word count for the given type
      */
-    public function incrementWord(string $type, string $word): void
+    private function incrementWord(string $type, string $word): void
     {
         if (! isset($this->words[$type][$word])) {
             $this->words[$type][$word] = 0;
@@ -97,7 +127,7 @@ class Classifier
     /**
      * @return float|int
      */
-    public function p(string $word, string $type)
+    private function p(string $word, string $type)
     {
         $count = $this->words[$type][$word] ?? 0;
 
@@ -107,20 +137,10 @@ class Classifier
     /**
      * @return float|int
      */
-    public function pTotal(string $type)
+    private function pTotal(string $type)
     {
         return $this->uneven
             ? ($this->documents[$type] + 1) / (array_sum($this->documents) + 1)
             : 1;
-    }
-
-    /**
-     * @return Collection<int, string>
-     */
-    public function getWords(string $string): Collection
-    {
-        return Str::of($string)
-            ->lower()
-            ->matchAll('/[[:alpha:]]+/u');
     }
 }
