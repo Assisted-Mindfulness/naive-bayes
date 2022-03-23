@@ -67,9 +67,9 @@ class ClassifierTest extends TestCase
         $classifier = new Classifier();
 
         $classifier
-            ->learn(file_get_contents(__DIR__ . '/datasets/training.language.en.txt'), 'English')
-            ->learn(file_get_contents(__DIR__ . '/datasets/training.language.fr.txt'), 'French')
-            ->learn(file_get_contents(__DIR__ . '/datasets/training.language.de.txt'), 'German');
+            ->learn((string) file_get_contents(__DIR__ . '/datasets/training.language.en.txt'), 'English')
+            ->learn((string) file_get_contents(__DIR__ . '/datasets/training.language.fr.txt'), 'French')
+            ->learn((string) file_get_contents(__DIR__ . '/datasets/training.language.de.txt'), 'German');
 
 
         $this->assertSame('English', $classifier->most('I am English'));

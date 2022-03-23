@@ -9,24 +9,19 @@ use Illuminate\Support\Str;
 class Classifier
 {
     /**
-     * @var array
+     * @var array<string, array<string, int>>
      */
     private array $words = [];
 
     /**
-     * @var array
+     * @var array<string, int>
      */
     private array $documents = [];
 
-    /**
-     * @var bool
-     */
-    protected bool $uneven = false;
+    private bool $uneven = false;
 
     /**
-     * @param string $statement
-     *
-     * @return Collection
+     * @return Collection<string, string>
      */
     public function guess(string $statement): Collection
     {
@@ -45,29 +40,20 @@ class Classifier
             ->sortDesc();
     }
 
-    /**
-     * @param string $statement
-     *
-     * @return string
-     */
     public function most(string $statement): string
     {
+        /** @var string */
         return $this->guess($statement)->keys()->first();
     }
 
     /**
-     * @param string $statement
-     * @param string $type
-     *
      * @return $this
      */
-    public function learn(string $statement, string $type): Classifier
+    public function learn(string $statement, string $type): self
     {
-        $this
-            ->getWords($statement)
-            ->each(function (string $word) use ($type) {
-                $this->incrementWord($type, $word);
-            });
+        foreach ($this->getWords($statement) as $word) {
+            $this->incrementWord($type, $word);
+        }
 
         $this->incrementType($type);
 
@@ -75,11 +61,9 @@ class Classifier
     }
 
     /**
-     * @param bool $enabled
-     *
-     * @return Classifier
+     * @return self
      */
-    public function uneven(bool $enabled = true): Classifier
+    public function uneven(bool $enabled = true): self
     {
         $this->uneven = $enabled;
 
@@ -88,10 +72,6 @@ class Classifier
 
     /**
      * Increment the document count for the type
-     *
-     * @param string $type
-     *
-     * @return void
      */
     public function incrementType(string $type): void
     {
@@ -103,12 +83,7 @@ class Classifier
     }
 
     /**
-     * Increment the word count for the type
-     *
-     * @param string $type
-     * @param string $word
-     *
-     * @return void
+     * Increment the word count for the given type
      */
     public function incrementWord(string $type, string $word): void
     {
@@ -120,9 +95,6 @@ class Classifier
     }
 
     /**
-     * @param string $word
-     * @param string $type
-     *
      * @return float|int
      */
     public function p(string $word, string $type)
@@ -133,8 +105,6 @@ class Classifier
     }
 
     /**
-     * @param string $type
-     *
      * @return float|int
      */
     public function pTotal(string $type)
@@ -145,9 +115,7 @@ class Classifier
     }
 
     /**
-     * @param string $string
-     *
-     * @return Collection
+     * @return Collection<int, string>
      */
     public function getWords(string $string): Collection
     {
