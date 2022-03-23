@@ -34,7 +34,7 @@ class ClassifierTest extends TestCase
         $classifier = new Classifier();
 
         $classifier->setTokenizer(
-            fn($str) => array_values(array_filter(explode('/', $str)))
+            fn ($str) => array_values(array_filter(explode('/', $str)))
         );
 
         $this->assertEquals(
@@ -42,8 +42,6 @@ class ClassifierTest extends TestCase
             $classifier->tokenize('/usr/var/log/')->toArray()
         );
     }
-
-
 
     public function testMostClassifier(): void
     {
