@@ -14,13 +14,13 @@
         }
     ],
     "require": {
-        "php": "^8.0",
-        "illuminate/support": "^9.0",
+        "php": "^8.1",
+        "illuminate/support": "^9.0|^10.0",
         "brick/math": "^0.9.3"
     },
     "require-dev": {
         "phpstan/phpstan": "^1.4",
-        "phpunit/phpunit": "^9.5.14",
+        "phpunit/phpunit": "^9.5.14|^10",
         "symfony/var-dumper": "^6.0"
     },
     "autoload-dev": {
