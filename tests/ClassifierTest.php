@@ -73,7 +73,6 @@ class ClassifierTest extends TestCase
         //$this->assertSame('negative', $classifier->most('The service at the restaurant was terrible, and the food was awful.'));}
     */
 
-
     public function testTextClassifier(): void
     {
         $classifier = new Classifier();
@@ -160,7 +159,6 @@ class ClassifierTest extends TestCase
         // despite the presence of the words 'Chinese' and 'Macao'.
         $this->assertSame('japanese', $classifier->most('Chinese Macao Tokyo'));
     }
-
 
     public function testCategorizesSimpleCorrectly(): void
     {

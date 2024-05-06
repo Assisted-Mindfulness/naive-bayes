@@ -48,6 +48,7 @@ class Classifier
      * Tokenizes a given string into individual words.
      *
      * @param string $string The input string to tokenize.
+     *
      * @return Collection<int, string> A collection of tokens.
      */
     public function tokenize(string $string): Collection
@@ -124,7 +125,7 @@ class Classifier
      */
     private function incrementType(string $type): void
     {
-        if (!isset($this->documents[$type])) {
+        if (! isset($this->documents[$type])) {
             $this->documents[$type] = 0;
         }
 
@@ -136,7 +137,7 @@ class Classifier
      */
     private function incrementWord(string $type, string $word): void
     {
-        if (!isset($this->words[$type][$word])) {
+        if (! isset($this->words[$type][$word])) {
             $this->words[$type][$word] = 0;
         }
 
