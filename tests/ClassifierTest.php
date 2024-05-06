@@ -58,23 +58,21 @@ class ClassifierTest extends TestCase
     }
 
     /*
-        public function testTextDataSetsClassifier(): void
-        {
-            $classifier = new Classifier();
+    public function testTextDataSetsClassifier(): void
+    {
+        $classifier = new Classifier();
 
-            $classifier
-                ->learn(file_get_contents(__DIR__ . '/datasets/positive-words.txt'), 'positive')
-                ->learn(file_get_contents(__DIR__ . '/datasets/negative-words.txt'), 'negative');
+        $classifier
+            ->learn(file_get_contents(__DIR__ . '/datasets/positive-words.txt'), 'positive')
+            ->learn(file_get_contents(__DIR__ . '/datasets/negative-words.txt'), 'negative');
 
+        // Test for a sentence containing positive words
+        $this->assertSame('positive', $classifier->most('The movie was absolutely fantastic and uplifting.'));
 
-            dd(
-                $classifier->guess("Service outside is horrible. The waiter didn't even get our appetizers right. It came out after our mains. And did not fix the heater when it was out. Service is appalling.")
-            );
-
-            $this->assertSame('positive', $classifier->most('I love sunny days'));
-            $this->assertSame('negative', $classifier->most('I hate rain'));
-        }
+        // Test for a sentence containing negative words
+        //$this->assertSame('negative', $classifier->most('The service at the restaurant was terrible, and the food was awful.'));}
     */
+
 
     public function testTextClassifier(): void
     {
@@ -126,22 +124,43 @@ class ClassifierTest extends TestCase
         $this->assertSame('positive', $classifier->most('awesome, cool, amazing Yeah.'));
     }
 
-    /*
-        public function testCategorizesChineseCorrectly(): void
-        {
-            $classifier = new Classifier();
+    public function testWordCountCorrectly(): void
+    {
+        $classifier = new Classifier();
 
-            $classifier
-                ->learn('Chinese Beijing Chinese', 'chinese')
-                ->learn('Chinese Chinese Shanghai', 'chinese')
-                ->learn('Chinese Macao', 'chinese')
-                ->learn('Tokyo Japan Chinese', 'japanese')
-                ->learn('Chinese Macao Beijing Chinese Tokyo Japan', 'chinese');
+        $classifier
+            ->uneven(true)
+            ->learn('Chinese Beijing Chinese', 'chinese')
+            ->learn('Chinese Chinese Shanghai', 'chinese')
+            ->learn('Chinese Macao', 'chinese');
 
-            $this->assertSame('chinese', $classifier->most('Tokyo Japan Chinese Chinese Chinese Chinese'));
-            $this->assertSame('japanese', $classifier->most('Tokyo'));
-        }
-    */
+        // teach it how to identify the `japanese` category
+        $classifier->learn('Tokyo Japan Chinese', 'japanese');
+
+        // make sure it learned the `chinese` category correctly
+        $chineseFrequencyCount = $classifier->getWords('chinese');
+
+        $this->assertTrue($chineseFrequencyCount['chinese'] === 5);
+        $this->assertTrue($chineseFrequencyCount['beijing'] === 1);
+        $this->assertTrue($chineseFrequencyCount['shanghai'] === 1);
+        $this->assertTrue($chineseFrequencyCount['macao'] === 1);
+
+
+        // make sure it learned the `japanese` category correctly
+        $japaneseFrequencyCount = $classifier->getWords('japanese');
+
+        $this->assertTrue($japaneseFrequencyCount['tokyo'] === 1);
+        $this->assertTrue($japaneseFrequencyCount['japan'] === 1);
+        $this->assertTrue($japaneseFrequencyCount['chinese'] === 1);
+
+
+        // Verify that the classifier correctly categorizes a new document
+        // Due to the higher weight assigned to the word 'Tokyo' in the training data for the 'japanese' category,
+        // the classifier is expected to classify the document 'Chinese Macao Tokyo' as 'japanese',
+        // despite the presence of the words 'Chinese' and 'Macao'.
+        $this->assertSame('japanese', $classifier->most('Chinese Macao Tokyo'));
+    }
+
 
     public function testCategorizesSimpleCorrectly(): void
     {
@@ -185,13 +204,13 @@ class ClassifierTest extends TestCase
         $classifier = new Classifier();
 
         $classifier
-            ->learn('Some spam document', 'spam')
-            ->learn('Another spam document', 'spam')
-            ->learn('Some ham document', 'ham')
-            ->learn('Another ham document', 'ham');
+            ->learn('Learn how to grow your business with these proven strategies', 'ham')
+            ->learn('Unlock the secrets of successful investing in our latest guide', 'ham')
+            ->learn('Get exclusive access to limited-time discounts and offers', 'spam')
+            ->learn('Earn money from home with our easy-to-follow program', 'spam');
 
 
-        $this->assertSame('ham', $classifier->most('Some ham document'));
-        $this->assertSame('spam', $classifier->most('Some ham spam'));
+        $this->assertEquals('ham', $classifier->most('Discover the art of effective communication in our workshop'));
+        $this->assertEquals('spam', $classifier->most('Start making money from home today with our revolutionary system'));
     }
 }
