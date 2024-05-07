@@ -81,7 +81,7 @@ class Classifier
     }
 
     /**
-     * Guesses the type of a given statement using Naive Bayes classification.
+     * Guesses the type of given statement using Naive Bayes classification.
      */
     public function guess(string $statement): Collection
     {
@@ -89,16 +89,16 @@ class Classifier
 
         return collect($this->documents)
             ->map(function ($count, string $type) use ($words) {
-                $likelihood = $this->pTotal($type);
+                $likelihood = BigDecimal::of($this->pTotal($type));
 
                 foreach ($words as $word) {
-                    $likelihood *= $this->p($word, $type);
+                    $likelihood = $likelihood->multipliedBy($this->p($word, $type));
                 }
 
-                return (string) BigDecimal::of($likelihood);
+                return $likelihood;
             })
             ->sort(function ($a, $b) {
-                return BigDecimal::of($a)->compareTo($b);
+                return $a->compareTo($b);
             });
     }
 
@@ -151,7 +151,7 @@ class Classifier
      * @param string $word The word to calculate probability for.
      * @param string $type The type to calculate probability in.
      *
-     * @return int The calculated probability.
+     * @return \Brick\Math\BigInteger The calculated probability.
      */
     private function p(string $word, string $type)
     {
@@ -163,8 +163,7 @@ class Classifier
 
         return BigDecimal::of($count)
             ->dividedBy(array_sum($this->words[$type]), PHP_INT_SIZE, RoundingMode::HALF_UP)
-            ->getUnscaledValue()
-            ->toInt();
+            ->getUnscaledValue();
     }
 
     /**
