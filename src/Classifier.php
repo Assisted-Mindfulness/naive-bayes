@@ -3,6 +3,7 @@
 namespace AssistedMindfulness\NaiveBayes;
 
 use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -150,13 +151,20 @@ class Classifier
      * @param string $word The word to calculate probability for.
      * @param string $type The type to calculate probability in.
      *
-     * @return float|int The calculated probability.
+     * @return int The calculated probability.
      */
     private function p(string $word, string $type)
     {
         $count = $this->words[$type][$word] ?? 0;
 
-        return ($count + 1) / (array_sum($this->words[$type]) + 1);
+        if($count === 0) {
+            return 1;
+        }
+
+        return BigDecimal::of($count)
+            ->dividedBy(array_sum($this->words[$type]), PHP_INT_SIZE, RoundingMode::HALF_UP)
+            ->getUnscaledValue()
+            ->toInt();
     }
 
     /**
