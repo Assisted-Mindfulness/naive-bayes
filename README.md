@@ -54,6 +54,21 @@ items: array:2 [
 */
 ```
 
+## Tokenizer
+
+The algorithm utilizes a tokenizer to segment the text into words. By default, it splits the text by spaces and includes
+words with a length of more than 3 symbols. You can also define your custom tokenizer using the following example:
+
+```php
+$classifier = new Classifier();
+
+$classifier->setTokenizer(function (string $string) {
+    return Str::of($string)
+        ->lower()
+        ->matchAll('/[[:alpha:]]+/u')
+        ->filter(fn (string $word) => Str::length($word) > 3);
+});
+```
 
 ## Wrapping up
 
