@@ -63,7 +63,8 @@ class Classifier
 
         return Str::of($string)
             ->lower()
-            ->matchAll('/[[:alpha:]]+/u');
+            ->matchAll('/[[:alpha:]]+/u')
+            ->filter(fn (string $word) => Str::length($word) > 3);
     }
 
     /**

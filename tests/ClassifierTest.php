@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AssistedMindfulness\NaiveBayes\Tests;
 
 use AssistedMindfulness\NaiveBayes\Classifier;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\TestCase;
 
 class ClassifierTest extends TestCase
@@ -12,6 +13,12 @@ class ClassifierTest extends TestCase
     public function testTokenizeClassifier(): void
     {
         $classifier = new Classifier();
+
+        $classifier->setTokenizer(function (string $string) {
+            return Str::of($string)
+                ->lower()
+                ->matchAll('/[[:alpha:]]+/u');
+        });
 
         $this->assertEquals(
             ['hello', 'how', 'are', 'you'],
@@ -197,6 +204,12 @@ class ClassifierTest extends TestCase
     public function testSimpleSpam(): void
     {
         $classifier = new Classifier();
+
+        $classifier->setTokenizer(function (string $string) {
+            return Str::of($string)
+                ->lower()
+                ->matchAll('/[[:alpha:]]+/u');
+        });
 
         $classifier
             ->learn('Learn how to grow your business with these proven strategies', 'ham')
