@@ -57,7 +57,7 @@ items: array:2 [
 
 ## Uneven
 
-Toggles the "uneven" mode which adjusts probability calculation for document types.
+When the training set contains unbalanced data not intentionally but due to insufficient data, you can enable an 'uneven' mode that equalizes the probability calculation for document types.
 
 ```php
 $classifier
