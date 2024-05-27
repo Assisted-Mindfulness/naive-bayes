@@ -54,6 +54,17 @@ items: array:2 [
 */
 ```
 
+
+## Uneven
+
+Toggles the "uneven" mode which adjusts probability calculation for document types.
+
+```php
+$classifier
+   ->uneven()
+   ->guess('is a sunny days');
+```
+
 ## Tokenizer
 
 The algorithm utilizes a tokenizer to segment the text into words. By default, it splits the text by spaces and includes
