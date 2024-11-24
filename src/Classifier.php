@@ -158,7 +158,7 @@ class Classifier
     {
         $count = $this->words[$type][$word] ?? 0;
 
-        if($count === 0) {
+        if ($count === 0) {
             return 1;
         }
 
