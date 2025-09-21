@@ -13,19 +13,19 @@ class Classifier
     /**
      * @var ?callable(string): array<int, string>
      */
-    private $tokenizer;
+    protected $tokenizer;
 
     /**
      * @var array<string, array<string, int>>
      */
-    private array $words = [];
+    protected array $words = [];
 
     /**
      * @var array<string, int>
      */
-    private array $documents = [];
+    protected array $documents = [];
 
-    private bool $uneven = false;
+    protected bool $uneven = false;
 
     /**
      * Sets a custom tokenizer function for tokenizing input strings.
@@ -125,7 +125,7 @@ class Classifier
     /**
      * Increment the document count for the type
      */
-    private function incrementType(string $type): void
+    protected function incrementType(string $type): void
     {
         if (! isset($this->documents[$type])) {
             $this->documents[$type] = 0;
@@ -137,7 +137,7 @@ class Classifier
     /**
      * Increment the word count for the given type
      */
-    private function incrementWord(string $type, string $word): void
+    protected function incrementWord(string $type, string $word): void
     {
         if (! isset($this->words[$type][$word])) {
             $this->words[$type][$word] = 0;
@@ -154,7 +154,7 @@ class Classifier
      *
      * @return \Brick\Math\BigInteger The calculated probability.
      */
-    private function p(string $word, string $type)
+    protected function p(string $word, string $type)
     {
         $count = $this->words[$type][$word] ?? 0;
 
@@ -174,7 +174,7 @@ class Classifier
      *
      * @return float|int The calculated probability.
      */
-    private function pTotal(string $type)
+    protected function pTotal(string $type)
     {
         return $this->uneven
             ? ($this->documents[$type] + 1) / (array_sum($this->documents) + 1)
