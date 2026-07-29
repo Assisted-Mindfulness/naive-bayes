@@ -1,9 +1,23 @@
 {
     "name": "assisted-mindfulness/naive-bayes",
-    "description": "Naive Bayes classifier algorithm",
-    "keywords": [],
+    "description": "A fluent Naive Bayes classifier for PHP and Laravel with normalized arbitrary-precision probabilities.",
+    "keywords": [
+        "bayes",
+        "classification",
+        "classifier",
+        "laravel",
+        "machine-learning",
+        "naive-bayes",
+        "nlp",
+        "probability"
+    ],
+    "homepage": "https://github.com/Assisted-Mindfulness/naive-bayes",
     "type": "library",
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/Assisted-Mindfulness/naive-bayes/issues",
+        "source": "https://github.com/Assisted-Mindfulness/naive-bayes"
+    },
     "autoload": {
         "psr-4": {
             "AssistedMindfulness\\NaiveBayes\\": "src/"
