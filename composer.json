@@ -1,6 +1,8 @@
 {
     "name": "assisted-mindfulness/naive-bayes",
     "description": "Naive Bayes classifier algorithm",
+    "keywords": [],
+    "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -9,23 +11,52 @@
     },
     "authors": [
         {
-            "name": "tabuna",
-            "email": "bliz48rus@gmail.com"
+            "name": "Alexandr Chernyaev",
+            "email": "bliz48rus@gmail.com",
+            "homepage": "https://tabuna.github.io",
+            "role": "Maintainer"
         }
     ],
     "require": {
-        "php": "^8.1",
-        "illuminate/support": "^9.0|^10.0|^11.0|^12.0|^13.0",
-        "brick/math": "^0.9.3|^0.11|^0.12|^0.13|^0.14|^0.18"
+        "php": "^8.2",
+        "illuminate/support": "^12.0|^13.0",
+        "brick/math": "^0.18"
     },
     "require-dev": {
-        "phpstan/phpstan": "^1.4|^2.2",
-        "phpunit/phpunit": "^9.5.14|^10.0|^11.0|^12.0|^13.0",
-        "symfony/var-dumper": "^6.0|^7.0|^8.0"
+        "driftingly/rector-laravel": "^2.1",
+        "infection/infection": "^0.31|^0.34",
+        "laravel/pint": "^1.30",
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^11.5|^12.5|^13.0",
+        "rector/rector": "^2.3",
+        "symfony/var-dumper": "^7.4|^8.0"
     },
     "autoload-dev": {
         "psr-4": {
             "AssistedMindfulness\\NaiveBayes\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "analyse": "phpstan analyse --no-progress --debug",
+        "format": "pint",
+        "format:check": "pint --test",
+        "mutation": "infection --threads=max --no-progress",
+        "refactor": "rector process --debug",
+        "refactor:check": "rector process --dry-run --debug",
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-text",
+        "check": [
+            "@test",
+            "@analyse",
+            "@refactor:check",
+            "@format:check"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true
+        },
+        "sort-packages": true,
+        "lock": false
     }
 }

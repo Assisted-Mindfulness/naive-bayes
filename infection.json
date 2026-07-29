@@ -1,0 +1,27 @@
+{
+    "$schema": "https://raw.githubusercontent.com/infection/infection/0.34.1/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "timeout": 20,
+    "logs": {
+        "text": "infection.log",
+        "summary": "infection-summary.log",
+        "json": "infection-results.json",
+        "perMutator": "infection-per-mutator.log"
+    },
+    "mutators": {
+        "@default": true,
+        "ProtectedVisibility": false
+    },
+    "testFramework": "phpunit",
+    "testFrameworkOptions": "--order-by=default",
+    "initialTestsPhpOptions": "-d pcov.directory=.",
+    "phpUnit": {
+        "configDir": "."
+    },
+    "minMsi": 90,
+    "minCoveredMsi": 90
+}
