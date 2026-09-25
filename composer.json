@@ -34,7 +34,7 @@
     "require": {
         "php": "^8.2",
         "illuminate/support": "^12.0|^13.0",
-        "brick/math": "^0.18 || ^0.20 |^1.0"
+        "brick/math": "^0.18 || ^0.20 || ^1.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.1",
