@@ -222,9 +222,7 @@ class Classifier
      */
     protected function incrementType(int|string $type): void
     {
-        if (! isset($this->documents[$type])) {
-            $this->documents[$type] = 0;
-        }
+        $this->documents[$type] ??= 0;
 
         $this->documents[$type]++;
     }
@@ -234,9 +232,7 @@ class Classifier
      */
     protected function incrementWord(int|string $type, string $word): void
     {
-        if (! isset($this->words[$type][$word])) {
-            $this->words[$type][$word] = 0;
-        }
+        $this->words[$type][$word] ??= 0;
 
         $this->words[$type][$word]++;
     }
